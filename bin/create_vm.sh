@@ -44,7 +44,7 @@ CPUTHREADS=1
 MAXVCPUS=2
 
 HOST_NAME=`/bin/hostname`
-NIC_NAME=`ip addr | grep "BROADCAST,MULTICAST,UP,LOWER_UP" | cut -d ":" -f 2 | xargs`
+NIC_NAME=` route | grep '^default' | grep -o '[^ ]*$' | head -n 1 `
 echo "Using NIC: [${NIC_NAME}]"
 cpu_passthrough=TRUE
 
