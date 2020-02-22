@@ -36,12 +36,12 @@ AUTOKVM_TMP_PATH=${AUTOKVM_PATH}/tmp/${VM_OS_NAME}/${VM_NAME}
 VM_CONF_PATH=${AUTOKVM_PATH}/vm_conf/${VM_OS_NAME}
 USERS_LIST_FILE=${VM_CONF_PATH}/users-list.txt
 
-# get values from 'virsh capabilities | grep topology'
-CPUCORES=2
-CPUTHREADS=1
-
-#KVM configuration
-MAXVCPUS=2
+VIRSH_CAPABILITIES_XML=`virsh capabilities`
+SOCKETS=`echo $VIRSH_CAPABILITIES_XML | xmllint --xpath "string(//capabilities/host/cpu/topology/@sockets)" -`
+CPUCORES=`echo $VIRSH_CAPABILITIES_XML | xmllint --xpath "string(//capabilities/host/cpu/topology/@cores)" -`
+CPUTHREADS=`echo $VIRSH_CAPABILITIES_XML | xmllint --xpath "string(//capabilities/host/cpu/topology/@threads)" -`
+MAXVCPUS=$(( $SOCKETS*$CPUCORES*$CPUTHREADS ))
+echo "Sockets:${SOCKETS} Cores:${CPUCORES} Threads:${CPUTHREADS}: MaxVCPUS:${MAXVCPUS}"
 
 HOST_NAME=`/bin/hostname`
 NIC_NAME=` route | grep '^default' | grep -o '[^ ]*$' | head -n 1 `
