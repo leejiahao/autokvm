@@ -51,6 +51,10 @@ cpu_passthrough=TRUE
 SSH_KEY_FILE=${VM_CONF_PATH}/${HOST_NAME}.pub
 if [ ! -f ${SSH_KEY_FILE} ];then
     echo "Copying SSH key [${SSH_KEY_FILE}]"
+    if [ ! -f ${HOME}/.ssh/id_rsa.pub ];then
+        echo "SSH key file ${HOME}/.ssh/id_rsa.pub not found."
+        exit 1
+    fi
     cp -rp ${HOME}/.ssh/id_rsa.pub ${SSH_KEY_FILE}
 fi
 
