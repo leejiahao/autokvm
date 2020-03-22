@@ -29,6 +29,9 @@ VNC_PASSWORD=$1
 shift
 # P10
 CLOUD_IMG=$1
+shift
+
+CPU_PASSTHROUGH=$1
 
 AUTOKVM_PATH=/userap/glee/autokvm
 AUTOKVM_TMP_PATH=${AUTOKVM_PATH}/tmp/${VM_OS_NAME}/${VM_NAME}
@@ -46,7 +49,6 @@ echo "Sockets:${SOCKETS} Cores:${CPUCORES} Threads:${CPUTHREADS}: MaxVCPUS:${MAX
 HOST_NAME=`/bin/hostname`
 NIC_NAME=` route | grep '^default' | grep -o '[^ ]*$' | head -n 1 `
 echo "Using NIC: [${NIC_NAME}]"
-cpu_passthrough=TRUE
 
 SSH_KEY_FILE=${VM_CONF_PATH}/${HOST_NAME}.pub
 if [ ! -f ${SSH_KEY_FILE} ];then
@@ -160,8 +162,8 @@ sudo qemu-img convert -f qcow2 -O qcow2 ${AUTOKVM_TMP_PATH}/${VM_NAME}.img ${VM_
 
 # define VM
 
-if [[ "$cpu_passthrough" == TRUE ]] ; then
-  echo "cpu_passthrough = '${cpu_passthrough}'"
+if [[ "$CPU_PASSTHROUGH" == TRUE ]] ; then
+  echo "CPU_PASSTHROUGH = '${CPU_PASSTHROUGH}'"
   virt-install  \
       --name ${VM_NAME} \
       --memory ${VM_MEMSIZE} \
@@ -175,7 +177,7 @@ if [[ "$cpu_passthrough" == TRUE ]] ; then
       --network type=direct,source=${NIC_NAME} \
       --noautoconsole
 else
-  echo "cpu_passthrough = '${cpu_passthrough}'"
+  echo "CPU_PASSTHROUGH = '${CPU_PASSTHROUGH}'"
   virt-install  \
       --name ${VM_NAME} \
       --memory ${VM_MEMSIZE} \
